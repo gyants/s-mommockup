@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     const ibRes = await fetch(`${INFOBIP_BASE_URL}/people/1/persons`, {
       method: 'POST',
       headers: {
-        Authorization: App INFOBIP_API_KEY,
+        Authorization: `App ${INFOBIP_API_KEY}`,
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },

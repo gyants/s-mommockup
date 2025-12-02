@@ -9,7 +9,7 @@ export default function ThankYouPage() {
   function goBack() {
     // In a real LINE OA you might window.close() or LIFF close.
     // For demo, just go back to the register page.
-    router.push('/register');
+    router.push('/');
   }
 
   return (

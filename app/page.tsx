@@ -52,8 +52,8 @@ export default function RegisterPage() {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    if (!form.reportValidity()) return;
 
+    // no validation: allow empty fields
     setSubmitting(true);
 
     setTimeout(() => {
@@ -61,7 +61,7 @@ export default function RegisterPage() {
       form.reset();
       resetChips();
       router.push('/thank-you');
-    }, 1200);
+    }, 800); // short delay just for effect
   }
 
   return (
@@ -77,7 +77,7 @@ export default function RegisterPage() {
           </div>
           <h1 className="title-main">สมัครสมาชิก S‑Mom club</h1>
           <p className="title-sub">
-            กรอกข้อมูลให้ครบถ้วนเพื่อรับสิทธิประโยชน์สำหรับคุณแม่
+            กรอกข้อมูลเพื่อดูตัวอย่างขั้นตอนการสมัครสมาชิก
           </p>
           <div className="divider" />
 
@@ -86,14 +86,13 @@ export default function RegisterPage() {
             {/* Thai Name */}
             <div>
               <label htmlFor="firstName">
-                ชื่อ (ภาษาไทย) <span className="required">*</span>
+                ชื่อ (ภาษาไทย)
               </label>
               <input
                 className="input-pill"
                 id="firstName"
                 name="firstName"
                 type="text"
-                required
                 placeholder="กรุณาระบุชื่อจริง"
               />
             </div>
@@ -101,14 +100,13 @@ export default function RegisterPage() {
             {/* Thai Surname */}
             <div>
               <label htmlFor="lastName">
-                นามสกุล (ภาษาไทย) <span className="required">*</span>
+                นามสกุล (ภาษาไทย)
               </label>
               <input
                 className="input-pill"
                 id="lastName"
                 name="lastName"
                 type="text"
-                required
                 placeholder="กรุณาระบุนามสกุลจริง"
               />
             </div>
@@ -127,11 +125,9 @@ export default function RegisterPage() {
 
             {/* Due date */}
             <div>
-              <label>
-                วันกำหนดคลอด / วันเกิดบุตร <span className="required">*</span>
-              </label>
+              <label>วันกำหนดคลอด / วันเกิดบุตร</label>
               <div className="row">
-                <select className="input-pill" name="day" required defaultValue="">
+                <select className="input-pill" name="day" defaultValue="">
                   <option value="">วัน</option>
                   {Array.from({ length: 31 }).map((_, i) => (
                     <option key={i + 1} value={i + 1}>
@@ -139,7 +135,7 @@ export default function RegisterPage() {
                     </option>
                   ))}
                 </select>
-                <select className="input-pill" name="month" required defaultValue="">
+                <select className="input-pill" name="month" defaultValue="">
                   <option value="">เดือน</option>
                   {[
                     'ม.ค.',
@@ -160,7 +156,7 @@ export default function RegisterPage() {
                     </option>
                   ))}
                 </select>
-                <select className="input-pill" name="year" required defaultValue="">
+                <select className="input-pill" name="year" defaultValue="">
                   <option value="">ปี</option>
                   <option>2024</option>
                   <option>2025</option>
@@ -173,7 +169,7 @@ export default function RegisterPage() {
             <div>
               <label>
                 สถานที่คลอดบุตร<br />
-                โรงพยาบาล <span className="required">*</span>
+                โรงพยาบาล
               </label>
               <div
                 className="chips"
@@ -192,9 +188,7 @@ export default function RegisterPage() {
 
             {/* Birth plan */}
             <div>
-              <label>
-                แผนการคลอด <span className="required">*</span>
-              </label>
+              <label>แผนการคลอด</label>
               <div
                 className="chips"
                 data-name="birthPlan"
@@ -210,19 +204,18 @@ export default function RegisterPage() {
               <input type="hidden" name="birthPlan" defaultValue="csec" />
             </div>
 
-            {/* Address */}
+            {/* Address section */}
             <div className="section-label">ที่อยู่</div>
 
             <div>
               <label htmlFor="addressLine">
-                ที่อยู่สำหรับจัดส่งของรางวัล <span className="required">*</span>
+                ที่อยู่สำหรับจัดส่งของรางวัล
               </label>
               <input
                 className="input-pill"
                 id="addressLine"
                 name="addressLine"
                 type="text"
-                required
                 placeholder="ชื่ออาคาร / บ้านเลขที่ / ซอย / ถนน"
               />
             </div>
@@ -258,31 +251,4 @@ export default function RegisterPage() {
                   id="province"
                   name="province"
                   type="text"
-                  placeholder="จังหวัด"
-                />
-              </div>
-              <div>
-                <label htmlFor="postcode">รหัสไปรษณีย์</label>
-                <input
-                  className="input-pill"
-                  id="postcode"
-                  name="postcode"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="10240"
-                />
-              </div>
-            </div>
-
-            <button type="submit" className="submit-btn" disabled={submitting}>
-              {submitting ? 'กำลังส่ง...' : 'ยืนยันการสมัคร'}
-            </button>
-            <div className="note">
-              ข้อมูลนี้ใช้เพื่อการสื่อสารโปรโมชั่นและสิทธิประโยชน์จาก Nestlé S‑26 เท่านั้น
-            </div>
-          </form>
-        </div>
-      </div>
-    </main>
-  );
-}
+                  placeholder

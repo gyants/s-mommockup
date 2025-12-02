@@ -7,50 +7,55 @@ export default function RegisterPage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
 
-  function handleChipClick(
+  function handleChipGroupClick(
     e: React.MouseEvent<HTMLDivElement>,
     hiddenName: string
   ) {
-    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.chip');
-    if (!btn) return;
+    const button = (e.target as HTMLElement).closest<HTMLButtonElement>('.chip');
+    if (!button) return;
 
-    const group = btn.closest<HTMLDivElement>('.');
-    const chips = (btn.parentElement as HTMLDivElement).querySelectorAll<HTMLButtonElement>('.chip');
+    const group = button.closest<HTMLDivElement>();
+    if (!group) return;
+
+    // Toggle active in this group only
+    const chips = group.querySelectorAll<HTMLButtonElement>('.chip');
     chips.forEach((ch) => ch.classList.remove('active'));
-    btn.classList.add('active');
+    button.classList.add('active');
 
+    // Update hidden input
     const hidden = document.querySelector<HTMLInputElement>(
       `input[name="${hiddenName}"]`
     );
-    if (hidden) hidden.value = btn.dataset.value || '';
+    if (hidden) hidden.value = button.dataset.value || '';
   }
 
   function resetChips() {
     document.querySelectorAll<HTMLDivElement>('.chips').forEach((group) => {
       const chips = group.querySelectorAll<HTMLButtonElement>('.chip');
       chips.forEach((ch) => ch.classList.remove('active'));
-      if (chips[0]) {
-        chips[0].classList.add('active');
+
+      const first = chips[0];
+      if (first) {
+        first.classList.add('active');
         const hiddenName = group.dataset.name;
         if (hiddenName) {
           const hidden = document.querySelector<HTMLInputElement>(
             `input[name="${hiddenName}"]`
           );
-          if (hidden) hidden.value = chips[0].dataset.value || '';
+          if (hidden) hidden.value = first.dataset.value || '';
         }
       }
     });
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-
     if (!form.reportValidity()) return;
 
     setSubmitting(true);
 
-    // Fake 1.2s "send" then navigate
+    // Fake delay and then redirect to thank-you
     setTimeout(() => {
       setSubmitting(false);
       form.reset();
@@ -71,7 +76,9 @@ export default function RegisterPage() {
             </div>
           </div>
           <h1 className="title-main">สมัครสมาชิก S‑Mom club</h1>
-          <p className="title-sub">กรอกข้อมูลให้ครบถ้วนเพื่อรับสิทธิประโยชน์สำหรับคุณแม่</p>
+          <p className="title-sub">
+            กรอกข้อมูลให้ครบถ้วนเพื่อรับสิทธิประโยชน์สำหรับคุณแม่
+          </p>
           <div className="divider" />
 
           {/* Form */}
@@ -171,7 +178,7 @@ export default function RegisterPage() {
               <div
                 className="chips"
                 data-name="hospitalType"
-                onClick={(e) => handleChipClick(e, 'hospitalType')}
+                onClick={(e) => handleChipGroupClick(e, 'hospitalType')}
               >
                 <button type="button" className="chip active" data-value="public">
                   โรงพยาบาลรัฐบาล
@@ -191,7 +198,7 @@ export default function RegisterPage() {
               <div
                 className="chips"
                 data-name="birthPlan"
-                onClick={(e) => handleChipClick(e, 'birthPlan')}
+                onClick={(e) => handleChipGroupClick(e, 'birthPlan')}
               >
                 <button type="button" className="chip active" data-value="csec">
                   ผ่าคลอด

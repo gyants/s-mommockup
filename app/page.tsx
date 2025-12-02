@@ -251,4 +251,31 @@ export default function RegisterPage() {
                   id="province"
                   name="province"
                   type="text"
-                  placeholder
+                  placeholder="จังหวัด"
+                />
+              </div>
+              <div>
+                <label htmlFor="postcode">รหัสไปรษณีย์</label>
+                <input
+                  className="input-pill"
+                  id="postcode"
+                  name="postcode"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="10240"
+                />
+              </div>
+            </div>
+
+            <button type="submit" className="submit-btn" disabled={submitting}>
+              {submitting ? 'กำลังส่ง...' : 'ยืนยันการสมัคร'}
+            </button>
+            <div className="note">
+              แบบฟอร์มนี้เป็นตัวอย่างสำหรับเดโมเท่านั้น ไม่ได้บันทึกข้อมูลจริง
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  );
+}

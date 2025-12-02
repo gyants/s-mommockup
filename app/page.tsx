@@ -14,7 +14,8 @@ export default function RegisterPage() {
     const button = (e.target as HTMLElement).closest<HTMLButtonElement>('.chip');
     if (!button) return;
 
-    const group = button.closest<HTMLDivElement>();
+    // parentElement is the .chips group
+    const group = button.parentElement as HTMLDivElement | null;
     if (!group) return;
 
     // Toggle active in this group only
@@ -55,7 +56,6 @@ export default function RegisterPage() {
 
     setSubmitting(true);
 
-    // Fake delay and then redirect to thank-you
     setTimeout(() => {
       setSubmitting(false);
       form.reset();
@@ -210,7 +210,7 @@ export default function RegisterPage() {
               <input type="hidden" name="birthPlan" defaultValue="csec" />
             </div>
 
-            {/* Address section */}
+            {/* Address */}
             <div className="section-label">ที่อยู่</div>
 
             <div>

@@ -1,435 +1,483 @@
-'use client';
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>สมัครสมาชิก S‑Mom club</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-import React, { useState } from 'react';
-
-export default function Page() {
-  const [status, setStatus] = useState<{ type: 'idle' | 'success' | 'error'; message?: string }>({
-    type: 'idle'
-  });
-  const [submitting, setSubmitting] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setStatus({ type: 'idle' });
-
-    const form = e.currentTarget;
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      setStatus({ type: 'error', message: 'Please fill in all required fields correctly.' });
-      return;
+  <style>
+    :root {
+      --gold-light: #fff4d4;
+      --gold-mid: #f5e0ad;
+      --gold-deep: #d3a45d;
+      --gold-chip: #c18a45;
+      --gold-chip-bg: #f9edd3;
+      --text-main: #14325b;
+      --text-brown: #7a4b27;
+      --input-bg: #ffffff;
+      --input-border: #f6e4c2;
+      --green: #2e7d32;
+      --error: #c62828;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Prompt", system-ui, sans-serif;
     }
 
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+    * { box-sizing: border-box; }
 
-    // Build full Thai phone (+66)
-    let localPhone = (data.phoneLocal || '').replace(/\D/g, '');
-    if (localPhone.startsWith('0')) {
-      localPhone = localPhone.slice(1);
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      background: radial-gradient(circle at top, var(--gold-light), var(--gold-mid));
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      color: var(--text-main);
     }
-    const phone = `+66${localPhone}`;
 
-    const payload = {
-      firstName: data.firstName,
-      surname: data.surname,
-      phone,
-      facilityType: data.facilityType,
-      birthMethod: data.birthMethod,
-      addrNumber: data.addrNumber,
-      addrStreet: data.addrStreet,
-      addrArea: data.addrArea,
-      addrProvince: data.addrProvince,
-      addrZip: data.addrZip
-    };
-
-    try {
-      setSubmitting(true);
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || 'Registration failed.');
-      }
-
-      setStatus({ type: 'success', message: 'Welcome to the club! Registration successful.' });
-      form.reset();
-    } catch (err: any) {
-      setStatus({
-        type: 'error',
-        message: err?.message || 'Something went wrong. Please try again.'
-      });
-    } finally {
-      setSubmitting(false);
+    .page {
+      width: 100%;
+      max-width: 480px;
+      background: linear-gradient(#fffaf0, #feefcf);
+      border-radius: 24px;
+      box-shadow: 0 12px 30px rgba(165, 118, 55, 0.35);
+      padding: 20px 18px 24px;
+      position: relative;
+      overflow: hidden;
     }
-  }
 
-  return (
-    <main className="page">
-      <div
-        style={{
-          background: 'linear-gradient(160deg, #f9eac4 0%, #e6c980 100%)',
-          borderRadius: 30,
-          padding: '32px 24px 24px',
-          boxShadow:
-            '0 20px 50px rgba(74, 54, 10, 0.3), inset 0 0 0 1px rgba(255,255,255,0.4)',
-          border: '2px solid #fff',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
-        {/* decorative glow */}
-        <div
-          style={{
-            position: 'absolute',
-            top: -60,
-            right: -60,
-            width: 220,
-            height: 220,
-            background:
-              'radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 70%)',
-            borderRadius: '50%',
-            pointerEvents: 'none'
-          }}
-        />
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 15% 0%, rgba(255,255,255,0.6) 0, transparent 50%),
+                  radial-gradient(circle at 90% 0%, rgba(255,255,255,0.4) 0, transparent 55%);
+      pointer-events: none;
+    }
 
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          {/* header */}
-          <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <div
-              style={{
-                display: 'inline-block',
-                background: 'linear-gradient(135deg,#001e8c,#000f5a)',
-                color: '#ffd700',
-                fontWeight: 900,
-                fontSize: 26,
-                padding: '14px 24px',
-                borderRadius: '50% / 60%',
-                border: '2px solid #fff',
-                boxShadow: '0 10px 20px rgba(0,30,140,0.35)',
-                marginBottom: 12,
-                fontStyle: 'italic',
-                letterSpacing: -1
-              }}
-            >
-              S‑26
-              <span
-                style={{
-                  display: 'block',
-                  fontSize: 13,
-                  color: '#fff',
-                  fontWeight: 600,
-                  letterSpacing: 1,
-                  textTransform: 'uppercase',
-                  fontStyle: 'normal',
-                  marginTop: -2
-                }}
-              >
-                Gold
-              </span>
-            </div>
-            <h1
-              style={{
-                margin: 0,
-                fontSize: 20,
-                textTransform: 'uppercase',
-                letterSpacing: 0.8,
-                fontWeight: 800,
-                color: '#001e8c'
-              }}
-            >
-              Mom‑to‑Be Club
-            </h1>
-            <p style={{ margin: '6px 0 0', fontSize: 14, color: '#4b5e96' }}>
-              Join the journey for exclusive pregnancy tips and reminders.
-            </p>
-          </div>
+    .content {
+      position: relative;
+      z-index: 1;
+    }
 
-          {/* form */}
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {/* First name */}
-            <div>
-              <label
-                htmlFor="firstName"
-                style={{
-                  fontSize: 12,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.6,
-                  marginBottom: 4,
-                  display: 'block',
-                  color: '#001e8c'
-                }}
-              >
-                First Name
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                required
-                placeholder="Your name"
-                style={inputStyle}
-              />
-            </div>
+    /* Header */
+    .badge-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
 
-            {/* Surname */}
-            <div>
-              <label
-                htmlFor="surname"
-                style={{
-                  fontSize: 12,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.6,
-                  marginBottom: 4,
-                  display: 'block',
-                  color: '#001e8c'
-                }}
-              >
-                Surname
-              </label>
-              <input
-                id="surname"
-                name="surname"
-                required
-                placeholder="Family name"
-                style={inputStyle}
-              />
-            </div>
+    .badge {
+      padding: 10px 26px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 10%, #ffffff 0, #f3ddaa 40%, #c89a51 100%);
+      box-shadow: 0 10px 20px rgba(128, 87, 34, 0.45);
+      border: 1px solid #f8e8c4;
+      text-align: center;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .badge span {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: #20407c;
+    }
 
-            {/* Phone */}
-            <div>
-              <label
-                htmlFor="phoneLocal"
-                style={{
-                  fontSize: 12,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.6,
-                  marginBottom: 4,
-                  display: 'block',
-                  color: '#001e8c'
-                }}
-              >
-                Mobile Phone (TH)
-              </label>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '0 12px',
-                    borderRadius: 12,
-                    border: '1px solid #d4b56a',
-                    background: 'rgba(255,255,255,0.7)',
-                    fontWeight: 700,
-                    color: '#001e8c',
-                    minWidth: 90
-                  }}
-                >
-                  🇹🇭 +66
-                </div>
-                <input
-                  id="phoneLocal"
-                  name="phoneLocal"
-                  required
-                  placeholder="81 234 5678"
-                  pattern="[0-9]*"
-                  inputMode="numeric"
-                  style={inputStyle}
-                />
-              </div>
-            </div>
+    .title-main {
+      text-align: center;
+      margin: 12px 0 4px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #14325b;
+    }
 
-            {/* Facility type */}
-            <div>
-              <label
-                htmlFor="facilityType"
-                style={labelStyle}
-              >
-                Birth Facility Type
-              </label>
-              <select id="facilityType" name="facilityType" required style={inputStyle as any}>
-                <option value="">Select type…</option>
-                <option value="Public Hospital">Public Hospital</option>
-                <option value="Private Hospital">Private Hospital</option>
-              </select>
-            </div>
+    .title-sub {
+      text-align: center;
+      font-size: 13px;
+      color: #7b4b2b;
+      margin: 0 0 10px;
+    }
 
-            {/* Birth method */}
-            <div>
-              <label
-                htmlFor="birthMethod"
-                style={labelStyle}
-              >
-                Planned Birth Method
-              </label>
-              <select id="birthMethod" name="birthMethod" required style={inputStyle as any}>
-                <option value="">Select method…</option>
-                <option value="Natural">Natural Birth</option>
-                <option value="C-Section">C‑Section</option>
-              </select>
-            </div>
+    .divider {
+      height: 1px;
+      margin: 12px 0 10px;
+      background: linear-gradient(to right, transparent, #f0d3a3, transparent);
+    }
 
-            {/* Address section label */}
-            <div
-              style={{
-                fontSize: 11,
-                fontWeight: 800,
-                color: '#fff',
-                background: 'rgba(0, 30, 140, 0.2)',
-                padding: '4px 10px',
-                borderRadius: 4,
-                display: 'inline-block',
-                marginTop: 6
-              }}
-            >
-              Home Address
-            </div>
+    /* Form */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-            {/* Address fields */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 10 }}>
-              <div>
-                <label htmlFor="addrNumber" style={labelStyle}>
-                  House No.
-                </label>
-                <input
-                  id="addrNumber"
-                  name="addrNumber"
-                  required
-                  placeholder="12/3"
-                  style={inputStyle}
-                />
-              </div>
-              <div>
-                <label htmlFor="addrStreet" style={labelStyle}>
-                  Street / Road
-                </label>
-                <input
-                  id="addrStreet"
-                  name="addrStreet"
-                  required
-                  placeholder="Sukhumvit"
-                  style={inputStyle}
-                />
-              </div>
-            </div>
+    .section-label {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 12px 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-            <div>
-              <label htmlFor="addrArea" style={labelStyle}>
-                Sub‑district / Area
-              </label>
-              <input
-                id="addrArea"
-                name="addrArea"
-                required
-                placeholder="Thong Lo"
-                style={inputStyle}
-              />
-            </div>
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-brown);
+      margin-bottom: 4px;
+    }
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <div>
-                <label htmlFor="addrProvince" style={labelStyle}>
-                  Province
-                </label>
-                <input
-                  id="addrProvince"
-                  name="addrProvince"
-                  required
-                  placeholder="Bangkok"
-                  style={inputStyle}
-                />
-              </div>
-              <div>
-                <label htmlFor="addrZip" style={labelStyle}>
-                  Postcode
-                </label>
-                <input
-                  id="addrZip"
-                  name="addrZip"
-                  required
-                  placeholder="10110"
-                  pattern="[0-9]*"
-                  inputMode="numeric"
-                  style={inputStyle}
-                />
-              </div>
-            </div>
+    label .required {
+      color: #d32f2f;
+      margin-left: 2px;
+    }
 
-            <button
-              type="submit"
-              disabled={submitting}
-              style={{
-                marginTop: 10,
-                background: 'linear-gradient(180deg,#0033cc 0%,#001e8c 100%)',
-                color: '#fff',
-                border: 'none',
-                padding: 14,
-                fontSize: 15,
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: 1,
-                borderRadius: 999,
-                cursor: submitting ? 'default' : 'pointer',
-                boxShadow: '0 8px 20px rgba(0,30,140,0.4)',
-                transition: 'transform 0.1s'
-              }}
-            >
-              {submitting ? 'Sending…' : 'Register Now'}
-            </button>
+    .input-pill {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      font-size: 14px;
+      outline: none;
+      color: #404040;
+      box-shadow: 0 2px 4px rgba(222, 191, 133, 0.35);
+    }
 
-            {status.type !== 'idle' && (
-              <div
-                style={{
-                  marginTop: 12,
-                  padding: 10,
-                  borderRadius: 10,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  textAlign: 'center',
-                  background:
-                    status.type === 'success' ? '#dcfce7' : '#ffdbdb',
-                  color: status.type === 'success' ? '#166534' : '#b91c1c',
-                  border:
-                    status.type === 'success'
-                      ? '1px solid #86efac'
-                      : '1px solid #ffb3b3'
-                }}
-              >
-                {status.message}
-              </div>
-            )}
-          </form>
+    .input-pill::placeholder {
+      color: #c8c8c8;
+      font-weight: 400;
+    }
+
+    .input-pill:focus {
+      border-color: #e1bf80;
+      box-shadow: 0 0 0 2px rgba(228, 193, 124, 0.5);
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .row > * {
+      flex: 1;
+    }
+
+    .chips {
+      display: flex;
+      gap: 6px;
+      background: var(--gold-chip-bg);
+      padding: 4px;
+      border-radius: 999px;
+      box-shadow: 0 2px 4px rgba(222, 191, 133, 0.5);
+    }
+
+    .chip {
+      flex: 1;
+      border-radius: 999px;
+      text-align: center;
+      padding: 8px 6px;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+      color: #7b4b2b;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      background: var(--gold-chip);
+      color: #ffffff;
+      box-shadow: 0 2px 5px rgba(150, 96, 38, 0.5);
+    }
+
+    /* Submit */
+    .submit-btn {
+      margin-top: 10px;
+      border-radius: 999px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: linear-gradient(180deg, #f7d99f, #e2b567);
+      color: var(--text-main);
+      font-size: 15px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(152, 104, 46, 0.6);
+      cursor: pointer;
+    }
+
+    .submit-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 6px rgba(152, 104, 46, 0.6);
+    }
+
+    .note {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #8c6640;
+      text-align: center;
+    }
+
+    .status {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+
+    .status.success {
+      display: block;
+      background: #e8f5e9;
+      color: var(--green);
+      border: 1px solid #c8e6c9;
+    }
+
+    .status.error {
+      display: block;
+      background: #ffebee;
+      color: var(--error);
+      border: 1px solid #ffcdd2;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="content">
+      <!-- Header -->
+      <div class="badge-wrap">
+        <div class="badge">
+          S‑Mom Club
+          <span>Nestlé Nutrition‑S‑26</span>
         </div>
       </div>
-    </main>
-  );
-}
+      <h1 class="title-main">สมัครสมาชิก S‑Mom club</h1>
+      <p class="title-sub">กรอกข้อมูลให้ครบถ้วนเพื่อรับสิทธิประโยชน์สำหรับคุณแม่</p>
+      <div class="divider"></div>
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '11px 12px',
-  fontSize: 14,
-  background: '#fffdf5',
-  border: '1px solid #d4b56a',
-  borderRadius: 12,
-  color: '#001e8c',
-  fontWeight: 500,
-  outline: 'none',
-  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.03)'
-};
+      <!-- Form -->
+      <form id="mockForm">
+        <!-- Thai Name -->
+        <div>
+          <label for="firstName">
+            ชื่อ (ภาษาไทย) <span class="required">*</span>
+          </label>
+          <input
+            class="input-pill"
+            id="firstName"
+            name="firstName"
+            type="text"
+            required
+            placeholder="กรุณาระบุชื่อจริง"
+          />
+        </div>
 
-const labelStyle: React.CSSProperties = {
-  fontSize: 12,
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  letterSpacing: 0.6,
-  marginBottom: 4,
-  display: 'block',
-  color: '#001e8c'
-};
+        <!-- Thai Surname -->
+        <div>
+          <label for="lastName">
+            นามสกุล (ภาษาไทย) <span class="required">*</span>
+          </label>
+          <input
+            class="input-pill"
+            id="lastName"
+            name="lastName"
+            type="text"
+            required
+            placeholder="กรุณาระบุนามสกุลจริง"
+          />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email">อีเมล</label>
+          <input
+            class="input-pill"
+            id="email"
+            name="email"
+            type="email"
+            placeholder="emailname@mail.com"
+          />
+        </div>
+
+        <!-- Due date / DOB -->
+        <div>
+          <label>
+            วันกำหนดคลอด / วันเกิดบุตร <span class="required">*</span>
+          </label>
+          <div class="row">
+            <select class="input-pill" name="day" required>
+              <option value="">วัน</option>
+              ${[...Array(31)].map((_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
+            </select>
+            <select class="input-pill" name="month" required>
+              <option value="">เดือน</option>
+              <option>ม.ค.</option><option>ก.พ.</option><option>มี.ค.</option><option>เม.ย.</option>
+              <option>พ.ค.</option><option>มิ.ย.</option><option>ก.ค.</option><option>ส.ค.</option>
+              <option>ก.ย.</option><option>ต.ค.</option><option>พ.ย.</option><option>ธ.ค.</option>
+            </select>
+            <select class="input-pill" name="year" required>
+              <option value="">ปี</option>
+              <option>2024</option>
+              <option>2025</option>
+              <option>2026</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Hospital type -->
+        <div>
+          <label>
+            สถานที่คลอดบุตร<br />โรงพยาบาล <span class="required">*</span>
+          </label>
+          <div class="chips" data-name="hospitalType">
+            <button type="button" class="chip active" data-value="public">โรงพยาบาลรัฐบาล</button>
+            <button type="button" class="chip" data-value="private">โรงพยาบาลเอกชน</button>
+          </div>
+          <input type="hidden" name="hospitalType" value="public" />
+        </div>
+
+        <!-- Birth plan -->
+        <div>
+          <label>
+            แผนการคลอด <span class="required">*</span>
+          </label>
+          <div class="chips" data-name="birthPlan">
+            <button type="button" class="chip active" data-value="csec">ผ่าคลอด</button>
+            <button type="button" class="chip" data-value="natural">คลอดธรรมชาติ</button>
+          </div>
+          <input type="hidden" name="birthPlan" value="csec" />
+        </div>
+
+        <!-- Address section label -->
+        <div class="section-label">ที่อยู่</div>
+
+        <!-- Address fields (simple) -->
+        <div>
+          <label for="addressLine">
+            ที่อยู่สำหรับจัดส่งของรางวัล <span class="required">*</span>
+          </label>
+          <input
+            class="input-pill"
+            id="addressLine"
+            name="addressLine"
+            type="text"
+            required
+            placeholder="ชื่ออาคาร / บ้านเลขที่ / ซอย / ถนน"
+          />
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="subDistrict">แขวง / ตำบล</label>
+            <input
+              class="input-pill"
+              id="subDistrict"
+              name="subDistrict"
+              type="text"
+              placeholder="แขวง / ตำบล"
+            />
+          </div>
+          <div>
+            <label for="district">เขต / อำเภอ</label>
+            <input
+              class="input-pill"
+              id="district"
+              name="district"
+              type="text"
+              placeholder="เขต / อำเภอ"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="province">จังหวัด</label>
+            <input
+              class="input-pill"
+              id="province"
+              name="province"
+              type="text"
+              placeholder="จังหวัด"
+            />
+          </div>
+          <div>
+            <label for="postcode">รหัสไปรษณีย์</label>
+            <input
+              class="input-pill"
+              id="postcode"
+              name="postcode"
+              type="text"
+              inputmode="numeric"
+              placeholder="10240"
+            />
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn">ยืนยันการสมัคร</button>
+        <div class="note">
+          ข้อมูลนี้ใช้เพื่อการสื่อสารโปรโมชั่นและสิทธิประโยชน์จาก Nestlé S‑26 เท่านั้น
+        </div>
+
+        <div id="statusBox" class="status"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Transform chips into toggle groups
+    document.querySelectorAll('.chips').forEach(group => {
+      group.addEventListener('click', (e) => {
+        const btn = e.target.closest('.chip');
+        if (!btn) return;
+
+        group.querySelectorAll('.chip').forEach(ch => ch.classList.remove('active'));
+        btn.classList.add('active');
+
+        const hiddenName = group.dataset.name;
+        const hidden = document.querySelector('input[name="' + hiddenName + '"]');
+        if (hidden) hidden.value = btn.dataset.value;
+      });
+    });
+
+    // Mock submit: always success, no backend call
+    const form = document.getElementById('mockForm');
+    const statusBox = document.getElementById('statusBox');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+
+      statusBox.className = 'status';
+      statusBox.textContent = '';
+      const btn = form.querySelector('.submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'กำลังส่ง...';
+
+      // Fake delay then success
+      setTimeout(() => {
+        statusBox.className = 'status success';
+        statusBox.textContent = 'สมัครสมาชิกสำเร็จ ขอบคุณที่เข้าร่วม S‑Mom club!';
+        btn.disabled = false;
+        btn.textContent = 'ยืนยันการสมัคร';
+        form.reset();
+
+        // reset default chip selections
+        document.querySelectorAll('.chips').forEach(group => {
+          const chips = group.querySelectorAll('.chip');
+          chips.forEach(ch => ch.classList.remove('active'));
+          if (chips[0]) {
+            chips[0].classList.add('active');
+            const hidden = document.querySelector('input[name="' + group.dataset.name + '"]');
+            if (hidden) hidden.value = chips[0].dataset.value;
+          }
+        });
+      }, 1500);
+    });
+  </script>
+</body>
+</html>
